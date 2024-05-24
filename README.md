@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the Docker setup for deploying the coverage API and visualization services for [coverage.seattlecommunitynetwork.org](https://coverage.seattlecommunitynetwork.org/)
+This repository contains the Docker setup for deploying the coverage API and visualization services locally for [coverage.seattlecommunitynetwork.org](https://coverage.seattlecommunitynetwork.org/)
 . It includes the following components:
 - **ccn-coverage-api**: The backend API service.
 - **ccn-coverage-vis**: The frontend visualization service.
