@@ -1,0 +1,31 @@
+version: '3'
+services:
+  ccn-coverage-api:
+    build:
+      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-api.git#dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb  # Ensure API waits for MongoDB to be ready
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/api-data  # Set the MongoDB URI environment variable for the API
+
+  ccn-coverage-vis:
+    build:
+      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-vis.git#dockerfile
+    ports:
+      - "3002:3000"
+    depends_on:
+      - ccn-coverage-api  # Ensure Vis waits for API to be ready
+    environment:
+      - API_URL=http://ccn-coverage-api:3000  # Configures the internal URL to the API service
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db  # Enables persistent data storage
+
+volumes:
+  mongodb_data:  # Named volume that will store MongoDB data
