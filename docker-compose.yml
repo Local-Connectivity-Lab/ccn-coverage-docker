@@ -12,13 +12,22 @@ services:
 
   ccn-coverage-vis:
     build:
-      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-vis.git#dockerfile
+      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-vis.git#mmt456
     ports:
       - "3002:3000"
     depends_on:
       - ccn-coverage-api  # Ensure Vis waits for API to be ready
+      - ccn-coverage-scraper
     environment:
       - API_URL=http://ccn-coverage-api:3000  # Configures the internal URL to the API service
+
+  ccn-coverage-scraper:
+    build:
+      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-scraper.git#dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SCRAPER_URL=http://ccn-coverage-scraper:8000  # Configures the internal URL to the scraper service
 
   mongodb:
     image: mongo
