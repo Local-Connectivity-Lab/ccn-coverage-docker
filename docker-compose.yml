@@ -9,7 +9,13 @@ services:
       - mongodb  # Ensure API waits for MongoDB to be ready
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/api-data  # Set the MongoDB URI environment variable for the API
-
+      
+  ccn-coverage-scraper:
+    build:
+      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-scraper.git#dockerfile
+    ports:
+      - "8000:8000"
+      
   ccn-coverage-vis:
     build:
       context: https://github.com/Local-Connectivity-Lab/ccn-coverage-vis.git#mmt456
@@ -20,13 +26,6 @@ services:
       - ccn-coverage-scraper
     environment:
       - API_URL=http://ccn-coverage-api:3000  # Configures the internal URL to the API service
-
-  ccn-coverage-scraper:
-    build:
-      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-scraper.git#dockerfile
-    ports:
-      - "8000:8000"
-    environment:
       - SCRAPER_URL=http://ccn-coverage-scraper:8000  # Configures the internal URL to the scraper service
 
   mongodb:
