@@ -1,39 +1,77 @@
-version: '3'
+name: coverage
 services:
-  ccn-coverage-api:
-    build:
-      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-api.git#dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mongodb  # Ensure API waits for MongoDB to be ready
-    environment:
-      - MONGODB_URI=mongodb://mongodb:27017/api-data  # Set the MongoDB URI environment variable for the API
-      
+  # mongodb:
+  #   container_name: coverage-mongo
+  #   image: mongo
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db # Enables persistent data storage
+  #   stop_grace_period: 5s
+  #   healthcheck:
+  #     test: echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin --quiet | grep 1
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 30s
+
+  # ccn-coverage-api:
+  #   container_name: coverage-api
+  #   build:
+  #     #context: https://github.com/Local-Connectivity-Lab/ccn-coverage-api.git#dockerfile
+  #     context: ../ccn-coverage-api
+  #   volumes:
+  #     - ./keys:/usr/src/app/keys
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - mongodb
+  #   environment:
+  #     - MONGODB_URI=mongodb://mongodb:27017/api-data # Set the MongoDB URI environment variable for the API
+  #   stop_grace_period: 1s
+  #   healthcheck:
+  #     test:
+  #       ["CMD", "curl", "-f", "http://localhost:$COVERAGE_API_PORT/api/sites"]
+  #     interval: 10m
+  #     timeout: 30s
+  #     retries: 10
+  #     start_period: 30s
+
   ccn-coverage-scraper:
+    container_name: coverage-scraper
     build:
-      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-scraper.git#dockerfile
+      #context: https://github.com/Local-Connectivity-Lab/ccn-coverage-scraper.git#dockerfile
+      context: ../ccn-coverage-scraper
+    stop_grace_period: 1s
     ports:
       - "8000:8000"
-      
+    healthcheck:
+      test: curl --fail http://localhost:8000/health || exit 1
+      interval: 1m
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
   ccn-coverage-vis:
+    container_name: coverage-vis
     build:
-      context: https://github.com/Local-Connectivity-Lab/ccn-coverage-vis.git#mmt456
+      #context: https://github.com/Local-Connectivity-Lab/ccn-coverage-vis.git#docker-latest
+      context: ../ccn-coverage-vis
     ports:
       - "3002:3000"
-    depends_on:
-      - ccn-coverage-api  # Ensure Vis waits for API to be ready
-      - ccn-coverage-scraper
-    environment:
-      - API_URL=http://ccn-coverage-api:3000  # Configures the internal URL to the API service
-      - SCRAPER_URL=http://ccn-coverage-scraper:8000  # Configures the internal URL to the scraper service
+    #depends_on:
+    #  - ccn-coverage-api
+    #  - ccn-coverage-scraper
+    stop_grace_period: 1s
 
-  mongodb:
-    image: mongo
-    ports:
-      - "27017:27017"
+  nginx:
+    container_name: coverage-nginx
+    image: nginx
     volumes:
-      - mongodb_data:/data/db  # Enables persistent data storage
+      - ./coverage-nginx.conf:/etc/nginx/conf.d/coverage-nginx.conf:ro
+    ports:
+      - "8080:80"
+    stop_grace_period: 1s
 
 volumes:
-  mongodb_data:  # Named volume that will store MongoDB data
+  mongodb_data: # Named volume that will store MongoDB data
