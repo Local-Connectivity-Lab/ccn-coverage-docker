@@ -1,19 +1,33 @@
 # ccn-coverage-docker
 
+## tl;dr
+```
+# clone
+git clone https://github.com/Local-Connectivity-Lab/ccn-coverage-docker
+cd ccn-coverage-docker
+git checkout allconnect
+# generate keys
+mkdir keys; cd keys
+openssl ecparam -name secp256k1 -genkey -out api-secret
+openssl ec -in api-secret -pubout -out api-pub
+# start the system (it will take a few minutes)
+docker compose up -d --build
+```
+
 ## Overview
 
 This repository contains the Docker setup for deploying the coverage API and visualization services locally for [coverage.seattlecommunitynetwork.org](https://coverage.seattlecommunitynetwork.org/)
 . It includes the following components:
 - **ccn-coverage-api**: The backend API service.
+- **ccn-coverage-scraper**: The AllConnect API service.
 - **ccn-coverage-vis**: The frontend visualization service.
 - **MongoDB**: The database service.
+- **nginx**: To provide reverse proxy.
 
 ## Prerequisites
 
 Ensure you have the following installed on your system:
 - [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-
 
 ## Deployment
 
