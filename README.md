@@ -6,11 +6,13 @@
 git clone https://github.com/Local-Connectivity-Lab/ccn-coverage-docker
 cd ccn-coverage-docker
 git checkout allconnect
+
 # generate keys
 mkdir keys; cd keys
 openssl ecparam -name secp256k1 -genkey -out api-secret
 openssl ec -in api-secret -pubout -out api-pub
-# start the system (it will take a few minutes)
+
+# start the system (it will take a couple of minutes)
 docker compose up -d --build
 ```
 
