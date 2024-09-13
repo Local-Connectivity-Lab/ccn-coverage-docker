@@ -7,6 +7,14 @@ git clone https://github.com/Local-Connectivity-Lab/ccn-coverage-docker
 cd ccn-coverage-docker
 git checkout allconnect
 
+# create .env file, with dev defaults
+cat > .env << EOF
+PUBLIC_URL=.
+PORT=3002
+COVERAGE_API_PORT=3000
+SCRAPER_URL=http://localhost/plans
+EOF
+
 # generate keys
 mkdir keys; cd keys
 openssl ecparam -name secp256k1 -genkey -out api-secret
